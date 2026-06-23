@@ -1,5 +1,7 @@
 import json
 
+import requests
+
 from src.runner import (
     extract_jsonpath,
     evaluate_assertion,
@@ -52,13 +54,13 @@ class FakeResponse:
     def __init__(self, status_code=200, headers=None, text="", json_data=None):
         self.status_code = status_code
         self.headers = headers or {}
-        self._text = text
+        self.text = text
         self._json_data = json_data
 
     def json(self):
         if self._json_data is not None:
             return self._json_data
-        return json.loads(self._text)
+        return json.loads(self.text)
 
 
 class TestEvaluateAssertion:
@@ -111,7 +113,7 @@ class TestEvaluateAssertion:
 
 class TestRunTest:
     def test_request_exception(self, mocker):
-        mocker.patch("requests.request", side_effect=Exception("Connection failed"))
+        mocker.patch("requests.request", side_effect=requests.RequestException("Connection failed"))
         result = run_test({
             "name": "fail",
             "request": {"url": "http://x.com", "method": "GET"},
