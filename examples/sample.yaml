@@ -1,0 +1,43 @@
+tests:
+  - name: JSONPlaceholder GET post
+    request:
+      method: GET
+      url: https://jsonplaceholder.typicode.com/posts/1
+    asserts:
+      - status: 200
+      - jsonpath: userId
+        eq: 1
+      - jsonpath: id
+        eq: 1
+      - jsonpath: title
+        contains: "sunt"
+
+  - name: JSONPlaceholder POST
+    request:
+      method: POST
+      url: https://jsonplaceholder.typicode.com/posts
+      headers:
+        Content-Type: application/json
+      body:
+        title: foo
+        body: bar
+        userId: 1
+    asserts:
+      - status: 201
+      - jsonpath: id
+        gt: 0
+
+  - name: HTTPBin status check
+    request:
+      method: GET
+      url: https://httpbin.org/status/200
+    asserts:
+      - status: 200
+
+  - name: HTTPBin delay (should pass)
+    request:
+      method: GET
+      url: https://httpbin.org/delay/1
+      timeout: 5
+    asserts:
+      - status: 200
