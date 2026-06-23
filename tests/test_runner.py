@@ -1,8 +1,5 @@
 import json
 
-import pytest
-import requests as req_lib
-
 from src.runner import (
     extract_jsonpath,
     evaluate_assertion,
@@ -10,7 +7,6 @@ from src.runner import (
     _get_operator,
     _get_expected,
     run_test,
-    TestResult,
 )
 
 

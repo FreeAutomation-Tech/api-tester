@@ -1,9 +1,7 @@
-import json
 import tempfile
 from pathlib import Path
 
 import pytest
-import yaml
 
 from src.parser import load_test_file, validate_test, parse_tests, _resolve_vars
 
@@ -17,7 +15,12 @@ def _write_yaml(content: str) -> str:
 
 class TestLoadTestFile:
     def test_valid_yaml(self):
-        path = _write_yaml("tests:\n  - name: test1\n    request:\n      url: https://example.com\n      method: GET\n    asserts:\n      - status: 200\n")
+        yaml_content = (
+            "tests:\n  - name: test1\n    request:\n"
+            "      url: https://example.com\n      method: GET\n"
+            "    asserts:\n      - status: 200\n"
+        )
+        path = _write_yaml(yaml_content)
         data = load_test_file(path)
         assert "tests" in data
         assert len(data["tests"]) == 1
@@ -73,15 +76,23 @@ class TestValidateTest:
 
 class TestParseTests:
     def test_parse_with_vars(self):
-        path = _write_yaml(
-            "tests:\n  - name: test1\n    request:\n      url: '{{BASE}}/api'\n      method: GET\n    asserts:\n      - status: 200\n"
+        yaml_content = (
+            "tests:\n  - name: test1\n    request:\n"
+            "      url: '{{BASE}}/api'\n      method: GET\n"
+            "    asserts:\n      - status: 200\n"
         )
+        path = _write_yaml(yaml_content)
         tests = parse_tests(path, {"BASE": "https://example.com"})
         assert tests[0]["request"]["url"] == "https://example.com/api"
         Path(path).unlink()
 
     def test_parse_validation_error(self):
-        path = _write_yaml("tests:\n  - name: t\n    request:\n      method: INVALID\n      url: x\n    asserts:\n      - status: 200\n")
+        yaml_content = (
+            "tests:\n  - name: t\n    request:\n"
+            "      method: INVALID\n      url: x\n"
+            "    asserts:\n      - status: 200\n"
+        )
+        path = _write_yaml(yaml_content)
         with pytest.raises(ValueError):
             parse_tests(path)
         Path(path).unlink()
