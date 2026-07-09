@@ -60,3 +60,7 @@ Set `AI_PROVIDER=anthropic` (default: openai).
 asserts:
   - ai: "the response error message mentions authentication failure"
 ```
+---
+*If you find this useful, please consider giving it a star ⭐ — it helps others discover it too!*
+
+*Thank you for your support! 🙏*
